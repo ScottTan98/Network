@@ -1,0 +1,50 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+<div class="card" style="width: 18rem;">
+  <div class="card-body">
+    <h5 class="card-title">{{ userinfo.username }}</h5>
+    <h6 class="card-subtitle mb-2 text-muted">{{ userinfo.email }}</h6>
+    <div style="display: flex">
+      <p class="text-muted">
+        Follows:
+        <span id="numfollowing" class="badge bg-light text-dark">{{ total_following }}</span> 
+        Followers:
+        <span id="numfollowers" class="badge bg-light text-dark">{{ total_followers }}</span>
+      </p>
+    </div>
+    {% if user.is_authenticated and user.id != userinfo.id %}
+    <p>
+      {% if is_following > 0 %}
+        <button data-id="{{ userinfo.id }}" id="btnfollow" type="button" class="btn btn-primary">Followed</button>
+      {% else %}
+        <button data-id="{{ userinfo.id }}" id="btnfollow" type="button" class="btn btn-outline-primary">Follow</button>
+      {% endif %}
+    </p>
+    {% endif %}
+  </div>
+</div>
+
+  {% for post in postData %}
+  <div class="box">
+    <h5>{{ post.user }}</h5>
+    <p id="post-content-{{post.id}}" class="post">{{ post.content }}</p>
+    <p>{{ post.timestamp }}</p>
+    <button class="text-primary edit" data-id="{{post.id}}" id="edit-btn-{{post.id}}">Edit</button>
+    <textarea data-id="{{post.id}}" id="post-edit-{{post.id}}" style="display:none;" class="form-control textarea" row="3">{{post.content}}</textarea>
+    <br>
+    {% if not request.user in post.like.all %}
+    <button data-id="{{post.id}}" id="post-like-{{post.id}}" class="likedpost" data-liked="no">Like</button>
+    {% else %}
+    <button data-id="{{post.id}}" id="post-like-{{post.id}}" class="likedpost" data-liked="yes">Liked</button>
+    {% endif %}
+    <p id="post-count-{{post.id}}">{{post.like.count}}</p>
+  </div>
+  
+  {% endfor %}
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'network/follow.js' %}"></script>
+{% endblock %}

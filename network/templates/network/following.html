@@ -1,0 +1,23 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+  {% for post in postData %}
+  <div class="box">
+    <h5>{{ post.user }}</h5>
+    <p id="post-content-{{post.id}}" class="post">{{ post.content }}</p>
+    <p>{{ post.timestamp }}</p>
+    <br>
+    {% if not request.user in post.like.all %}
+    <button data-id="{{post.id}}" id="post-like-{{post.id}}" class="likedpost" data-liked="no">Like</button>
+    {% else %}
+    <button data-id="{{post.id}}" id="post-like-{{post.id}}" class="likedpost" data-liked="yes">Liked</button>
+    {% endif %}
+    <p id="post-count-{{post.id}}">{{post.like.count}}</p>
+  </div>
+  {% endfor %}
+{% endblock %}
+
+{% block script %}
+<script src="{% static 'network/follow.js' %}"></script>
+{% endblock %}

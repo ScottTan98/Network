@@ -1,0 +1,44 @@
+{% extends "network/layout.html" %}
+{% load static %}
+
+{% block body %}
+  <div id="posts-view">
+  </div>
+  {% if user.is_authenticated %}
+  <div class="box">
+      <div class="mb-3">
+        <form action="{% url 'post' %}" method="POST">
+          {% csrf_token %}
+          <label for="newPostInput" class="form-label">New Post</label>
+          <textarea class="form-control" id="content" rows="3" name="content"></textarea>
+          <input type="submit" value="Post" class="btn btn-primary">
+        </form>
+      </div>
+  </div>
+  {%endif%}
+
+  {% for post in postData %}
+    <div class="box">
+      <h5>{{ post.user }}</h5>
+      <p id="post-content-{{post.id}}" class="post">{{ post.content }}</p>
+      <p>{{ post.timestamp }}</p>
+      <p>{{ post.likes }}</p>
+      {% if post.user == loginUser %}
+        <button class="text-primary edit" data-id="{{post.id}}" id="edit-btn-{{post.id}}">Edit</button>
+      {% endif %}
+      <textarea data-id="{{post.id}}" id="post-edit-{{post.id}}" style="display:none;" class="form-control textarea" row="3">{{post.content}}</textarea>
+      <br>
+      {% if not request.user in post.like.all %}
+      <button data-id="{{post.id}}" id="post-like-{{post.id}}" class="likedpost" data-liked="no">Like</button>
+      {% else %}
+      <button data-id="{{post.id}}" id="post-like-{{post.id}}" class="likedpost" data-liked="yes">Liked</button>
+      {% endif %}
+      <p id="post-count-{{post.id}}">{{post.like.count}}</p>
+    </div>
+
+  {% endfor %}
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'network/index.js' %}"></script>
+{% endblock %}
